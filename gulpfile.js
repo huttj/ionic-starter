@@ -12,14 +12,21 @@ const gulp       = require('gulp'),
       sh         = require('shelljs');
 
 const paths = {
-  sass : ['./src/scss/**/*.scss'],
-  js   : ['./src/js/**/*.js'],
-  jade : ['./src/**/*.jade']
+  img  : ['src/img/**/*'],
+  jade : ['src/**/*.jade'],
+  js   : ['src/js/**/*.js'],
+  sass : ['src/scss/**/*.scss']
 };
 
 gulp.task('lib', function() {
-  return gulp.src('./lib/**/*')
+  return gulp.src('lib/**/*')
     .pipe(gulp.dest('www/lib'))
+});
+
+// TODO: Replace with ImageMagick
+gulp.task('img', function() {
+  return gulp.src(paths.img)
+    .pipe(gulp.dest('www/img'))
 });
 
 gulp.task('js', function() {
@@ -39,23 +46,24 @@ gulp.task('jade', function () {
     .pipe(gulp.dest('www'))
 });
 
-gulp.task('default', ['sass', 'js', 'jade', 'lib']);
+gulp.task('default', ['sass', 'js', 'jade', 'lib', 'img']);
 
 gulp.task('sass', function(done) {
-  gulp.src('./src/scss/ionic.app.scss')
+  gulp.src('src/scss/ionic.app.scss')
     .pipe(sass())
     .on('error', sass.logError)
-    .pipe(gulp.dest('./www/css/'))
+    .pipe(gulp.dest('www/css/'))
     .pipe(minifyCss({
       keepSpecialComments: 0
     }))
     .pipe(rename({ extname: '.min.css' }))
-    .pipe(gulp.dest('./www/css/'))
+    .pipe(gulp.dest('www/css/'))
     .on('end', done);
 });
 
 gulp.task('watch', ['default'], function() {
   gulp.watch(paths.js, ['js']);
+  gulp.watch(paths.img, ['img']);
   gulp.watch(paths.sass, ['sass']);
   gulp.watch(paths.jade, ['jade']);
 });
